@@ -1,4 +1,4 @@
-HttpExchange
+CacheExchange
 ============
 
-A collection of PHP interfaces and adapters to make swapping out HTTP library dependencies quick and easy.
+A collection of PHP interfaces and adapters to make swapping out cache library dependencies quick and easy.

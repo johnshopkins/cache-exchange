@@ -1,7 +1,7 @@
 {
-    "name": "johnshopkins/http-exchange",
-    "description": "A collection of PHP interfaces and adapters to make swapping out HTTP library dependencies quick and easy.",
-    "keywords": ["http", "interfaces", "adapters", "api", "wrapper"],
+    "name": "johnshopkins/cache-exchange",
+    "description": "A collection of PHP interfaces and adapters to make swapping out cache library dependencies quick and easy.",
+    "keywords": ["cache", "interfaces", "adapters", "wrapper"],
     "homepage": "http://github.com/johnshopkins/http-exchange",
     "license": "MIT",
     "authors": [
@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-0" : {
-            "HttpExchange" : ""
+            "CacheExchange" : ""
         }
     }
 }
