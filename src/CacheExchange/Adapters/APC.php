@@ -1,31 +1,31 @@
 <?php
 
-namespace HttpExchange\Adapters;
+namespace CacheExchange\Adapters;
 
-class Resty implements \HttpExchange\Interfaces\ClientInterface
+class APC implements \CacheExchange\Interfaces\Datastore
 {
-	public $http;
-	protected $response;
-
-	public function __construct($resty)
+	public function store($key, $value, $seconds)
 	{
-		$this->http = $resty;
+		return apc_store($key, $value, $seconds);
 	}
 
-	public function get($url)
+	public function fetch($key)
 	{
-		$this->response = $this->http->get($url);
-		return $this;
+		return apc_fetch($key);
 	}
 
-	public function getBody()
+	public function exists($key)
 	{
-		return $this->response["body"];
+		return apc_exists($key);
 	}
 
-	public function getStatusCode()
+	public function delete($key)
 	{
-		return $this->response["status"];
+		return apc_delete($key);
 	}
 
+	public function clear()
+	{
+		return apc_clear_cache();
+	}
 }
