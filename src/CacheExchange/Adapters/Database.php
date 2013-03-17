@@ -37,7 +37,7 @@ class Database implements \CacheExchange\Interfaces\Datastore
 	public function update($key, $value, $seconds)
 	{
 		$values = array(
-			"cachevalue" => $value,
+			"cachevalue" => serialize($value),
 			"expires" => time() + $seconds
 		);
 
@@ -59,7 +59,7 @@ class Database implements \CacheExchange\Interfaces\Datastore
 	{
 		$values = array(
 			"cachekey" => $key,
-			"cachevalue" => $value,
+			"cachevalue" => serialize($value),
 			"expires" => time() + $seconds
 		);
 
@@ -94,7 +94,7 @@ class Database implements \CacheExchange\Interfaces\Datastore
 		$results = $this->pdoPrepared->fetchAll(\PDO::FETCH_ASSOC);
 		$result = array_shift($results);
 
-		return !empty($result) ? $result["cachevalue"] : null;
+		return !empty($result) ? unserialize($result["cachevalue"]) : null;
 	}
 
 	public function exists($key)
