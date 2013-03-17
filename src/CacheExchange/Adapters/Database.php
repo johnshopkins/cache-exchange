@@ -89,7 +89,7 @@ class Database implements \CacheExchange\Interfaces\Datastore
 		$sql = "SELECT * FROM ce_cache WHERE cachekey = '{$key}' AND expires > {$now}";
 
 		$this->pdoPrepared = $this->pdo->prepare($sql);
-		$this->pdoPrepared->execute($values);
+		$this->pdoPrepared->execute();
 
 		$results = $this->pdoPrepared->fetchAll(\PDO::FETCH_ASSOC);
 		$result = array_shift($results);
