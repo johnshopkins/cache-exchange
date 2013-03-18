@@ -102,7 +102,7 @@ class Database implements \CacheExchange\Interfaces\Datastore
 		$sql = "SELECT * FROM ce_cache WHERE cachekey = '{$key}'";
 
 		$this->pdoPrepared = $this->pdo->prepare($sql);
-		$this->pdoPrepared->execute($values);
+		$this->pdoPrepared->execute();
 
 		$results = $this->pdoPrepared->fetchAll(\PDO::FETCH_ASSOC);
 
