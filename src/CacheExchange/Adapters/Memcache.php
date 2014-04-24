@@ -24,7 +24,7 @@ class Memcache implements \CacheExchange\Interfaces\Datastore
             throw new \Exception('Cannot connect to ' . $connection["host"] . ':' . $connection["port"]);
         }
 
-        $this->compress = $settings["compress"] ? MEMCACGE_COMPRESSED : null;
+        $this->compress = $settings["compress"] ? MEMCACHE_COMPRESSED : null;
     }
 
     public function store($key, $value, $seconds)
