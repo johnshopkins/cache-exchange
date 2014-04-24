@@ -8,11 +8,10 @@ Assumes this database structure:
 
 CREATE TABLE `ce_cache` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `cachekey` varchar(255) NOT NULL DEFAULT '',
+  `cachekey` longtext,
   `cachevalue` longtext,
   `expires` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `cachekey` (`cachekey`)
+  PRIMARY KEY (`id`)
 );
 
 */
