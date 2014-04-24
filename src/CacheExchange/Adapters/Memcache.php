@@ -17,10 +17,10 @@ class Memcache implements \CacheExchange\Interfaces\Datastore
      */
     public function __construct($settings = array())
     {
-        $memcache = new \Memcache;
-        $this->cache = $memcache->connect($settings['host'], $settings['port']);
+        $this->cache = new \Memcache;
+        $connected = $this->cache->connect($settings['host'], $settings['port']);
         
-        if (!$this->cache) {
+        if (!$connected) {
             throw new \Exception('Cannot connect to ' . $connection["host"] . ':' . $connection["port"]);
         }
 
