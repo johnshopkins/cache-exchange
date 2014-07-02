@@ -23,7 +23,7 @@ class Cache
 		if (!is_array($params)) {
 			$params = array($params);
 		}
-		asort($params);
+		ksort($params);
 		return http_build_query($params);
 	}
 
