@@ -4,6 +4,8 @@ namespace CacheExchange\Adapters;
 
 class APC implements \CacheExchange\Interfaces\Datastore
 {
+	$this->cacheInfo = null;
+
 	public function store($key, $value, $seconds)
 	{
 		return apc_store($key, $value, $seconds);
@@ -28,4 +30,19 @@ class APC implements \CacheExchange\Interfaces\Datastore
 	{
 		return apc_clear_cache();
 	}
+
+  public function getKeys()
+  {
+    if (is_null($this->cacheInfo)) {
+      $this->cacheInfo = apc_cache_info("user")
+    }
+
+    $keys = array();
+
+    foreach ($this->cacheInfo["cache_list"] as $item) {
+      $keys[] = $item["info"];
+    }
+    
+    return $keys;
+  }
 }

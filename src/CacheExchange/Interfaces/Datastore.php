@@ -9,4 +9,5 @@ interface Datastore
 	public function exists($key);
 	public function delete($key);
 	public function clear();
+  public function getKeys();
 }

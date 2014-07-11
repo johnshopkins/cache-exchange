@@ -89,4 +89,13 @@ class Cache
 	{
 		return $this->datastore->clear();
 	}
+
+	/**
+	 * Get all keys stored in the cache
+	 * @return array
+	 */
+	public function getKeys()
+	{
+		return $this->datastore->getKeys();
+	}
 }
