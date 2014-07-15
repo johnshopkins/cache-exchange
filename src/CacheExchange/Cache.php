@@ -47,11 +47,13 @@ class Cache
 	 * 
 	 * @param 	array 	$params 	Array of values or key/value pairs
 	 *                          	that describe the data being fetched.
+	 * @param   boolean $makeKey  Convert params into a key. Pass false
+	 *                            if you already have the raw key.
 	 * @return mixed 	The stored value on success; FALSE on failure.
 	 */
-	public function fetch($params)
+	public function fetch($params, $makeKey = true)
 	{
-		$key = $this->makeKey($params);
+		$key = $makeKey ? $this->makeKey($params) : $params;
 		return $this->datastore->fetch($key);
 	}
 
@@ -60,11 +62,13 @@ class Cache
 	 * 
 	 * @param 	array 	$params 	Array of values or key/value pairs
 	 *                          	that describe the key being looked up.
+	 * @param   boolean $makeKey  Convert params into a key. Pass false
+	 *                            if you already have the raw key.
 	 * @return boolean	TRUE if the key exists; FALSE if it does not exist.
 	 */
-	public function exists($params)
+	public function exists($params, $makeKey = true)
 	{
-		$key = $this->makeKey($params);
+		$key = $makeKey ? $this->makeKey($params) : $params;
 		return $this->datastore->exists($key);
 	}
 
@@ -72,11 +76,13 @@ class Cache
 	 * [delete description]
 	 * @param 	array 	$params 	Array of values or key/value pairs
 	 *                          	that describe the key to be deleted.
+	 * @param   boolean $makeKey  Convert params into a key. Pass false
+	 *                            if you already have the raw key.
 	 * @return boolean	TRUE on suceess; FALSE on failure.
 	 */
-	public function delete($params)
+	public function delete($params, $makeKey = true)
 	{
-		$key = $this->makeKey($params);
+		$key = $makeKey ? $this->makeKey($params) : $params;
 		return $this->datastore->delete($key);
 	}
 
