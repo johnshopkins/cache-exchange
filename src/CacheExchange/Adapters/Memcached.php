@@ -22,7 +22,16 @@ class Memcached implements \CacheExchange\Interfaces\Datastore
   public function __construct($settings)
   {
     $this->cache = new \Memcached();
-    $this->cache->addServers($settings["connections"]);
+    $this->addServers($settings["connections"]);
+  }
+
+  protected function addServers($connections)
+  {
+    // make sure servers aren't being duplcated
+    $existingServers = $this->cache->getServerList();
+    if (!empty($existingServers)) return;
+
+    $this->cache->addServers($connections);
   }
 
   public function store($key, $value, $seconds)
