@@ -34,11 +34,13 @@ class Cache
 	 * @param 	array 		$params 	Array of values or key/value pairs
 	 *                          		that describe the data being stored.
 	 * @param  	integer 	$ttl 		Time to live in seconds
+	 * @param   boolean $makeKey  Convert params into a key. Pass false
+	 *                            if you already have the raw key.
 	 * @return 	boolean		TRUE on suceess; FALSE on failure.
 	 */
-	public function store($value, $params, $ttl = null)
+	public function store($value, $params, $ttl = null, $makeKey = true)
 	{
-		$key = $this->makeKey($params);
+		$key = $makeKey ? $this->makeKey($params) : $params;
 		return $this->datastore->store($key, $value, $ttl);
 	}
 
