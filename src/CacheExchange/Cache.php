@@ -5,26 +5,42 @@ namespace CacheExchange;
 class Cache
 {
 	protected $datastore;
+	protected $keymaker;
 
-	public function __construct(\CacheExchange\Interfaces\Datastore $datastore)
+	public function __construct(\CacheExchange\Interfaces\Datastore $datastore, $keymaker = null)
 	{
 		$this->datastore = $datastore;
+		
+		if (is_callable($keymaker)) {
+			$this->keymaker = $keymaker;
+		}
 	}
 
 	/**
-	 * Makes a cache key based on passed query string parameters
+	 * Makes a cache key based on the keymaker
+	 * or passed query string parameters
 	 * 
-	 * @param  string 	$params 	Associative array of key/values
-	 *                          	used to create the cache key.
+	 * @param  string 	$data Data to use to make the cache key
 	 * @return string
 	 */
-	protected function makeKey($params)
+	protected function makeKey($data)
 	{
-		if (!is_array($params)) {
-			$params = array($params);
+		if ($this->keymaker) {
+			
+			return call_user_func($this->keymaker, $data);
+			
+		} else {
+			
+			// default. Make the data into an array and sort.
+			
+			if (!is_array($data)) {
+				$data = array($data);
+			}
+			ksort($data);
+			return http_build_query($data);
+			
 		}
-		ksort($params);
-		return http_build_query($params);
+		
 	}
 
 	/**
