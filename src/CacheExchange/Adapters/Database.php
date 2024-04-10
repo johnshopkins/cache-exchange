@@ -79,7 +79,7 @@ class Database implements \CacheExchange\Interfaces\Datastore
 			$this->update($key, $value, $seconds);
 		} else {
 			$this->create($key, $value, $seconds);
-		}		
+		}
 	}
 
 	public function fetch($key)
@@ -111,7 +111,7 @@ class Database implements \CacheExchange\Interfaces\Datastore
 	public function delete($key)
 	{
 		$sql = "DELETE FROM ce_cache WHERE cachekey = '{$key}'";
-		
+
 		$this->pdoPrepared = $this->pdo->prepare($sql);
 		return $this->pdoPrepared->execute();
 	}
@@ -119,8 +119,16 @@ class Database implements \CacheExchange\Interfaces\Datastore
 	public function clear()
 	{
 		$sql = "DELETE FROM ce_cache";
-		
+
 		$this->pdoPrepared = $this->pdo->prepare($sql);
 		return $this->pdoPrepared->execute();
 	}
+
+  public function getKeys()
+  {
+    $sql = "SELECT cachekey FROM ce_cache";
+
+    $this->pdoPrepared = $this->pdo->prepare($sql);
+    return $this->pdoPrepared->execute();
+  }
 }
