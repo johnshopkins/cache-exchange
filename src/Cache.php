@@ -30,8 +30,6 @@ class Cache
 		} else {
       $this->keymaker = [$this, 'keymaker__string'];
     }
-
-    // print_r($this->keymaker); die();
 	}
 
   protected function keymaker__array(array|string $array): string
@@ -50,28 +48,13 @@ class Cache
   }
 
   /**
-   * Makes a cache key
+   * Make a cache key
    * @param $data   Data to base the cache key on
    * @return string
    */
 	protected function makeKey($data): string
 	{
-		if ($this->keymaker) {
-			
-			return call_user_func($this->keymaker, $data);
-			
-		} else {
-			
-			// default. Make the data into an array and sort.
-			
-			if (!is_array($data)) {
-				$data = array($data);
-			}
-			ksort($data);
-			return http_build_query($data);
-			
-		}
-		
+    return call_user_func($this->keymaker, $data);
 	}
 
   /**

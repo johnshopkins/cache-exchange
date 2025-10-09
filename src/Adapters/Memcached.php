@@ -6,7 +6,7 @@ namespace CacheExchange\Adapters;
  * Uses PHP Memcached extension
  * http://www.php.net/manual/en/class.memcached.php
  */
-class Memcached implements \CacheExchange\Interfaces\Datastore
+class Memcached implements \CacheExchange\Interfaces\DatastoreInterface
 {
   /**
    * Memcached object
@@ -14,46 +14,36 @@ class Memcached implements \CacheExchange\Interfaces\Datastore
    */
   protected $cache;
 
-  protected $ready = false;
+  /**
+   * Can memcached connect to the servers?
+   * @var bool
+   */
+  public $ready = false;
 
   /**
-   * __construct
-   * @param array $settings Array of settings
-   *                        "connections" => array of array of settings (multiple servers)
+   * @param $servers
    */
-  public function __construct($settings)
+  public function __construct($servers = [])
   {
     $this->cache = new \Memcached();
-    $this->addServers($settings["connections"]);
+    $this->cache->addServers($servers);
 
-    if ($this->cache->getStats() === false) {
-      // cannot connect to servers
-      return false;
-    } else {
+    if ($this->cache->getStats() !== false) {
       // can connect to servers
       $this->ready = true;
     }
   }
 
-  protected function addServers($connections)
-  {
-    // make sure servers aren't being duplcated
-    $existingServers = $this->cache->getServerList();
-    if (!empty($existingServers)) return;
-
-    $this->cache->addServers($connections);
-  }
-
-  public function store($key, $value, $seconds)
+  public function set(string $key, mixed $value, int $ttl = 0): bool
   {
     if (!$this->ready) {
       return false;
     }
 
-    return $this->cache->set($key, $value, $seconds);
+    return $this->cache->set($key, $value, $ttl);
   }
 
-  public function fetch($key)
+  public function get(string $key): mixed
   {
     if (!$this->ready) {
       return false;
@@ -62,17 +52,17 @@ class Memcached implements \CacheExchange\Interfaces\Datastore
     return $this->cache->get($key);
   }
 
-  public function exists($key)
+  public function exists(string $key): bool
   {
     if (!$this->ready) {
       return false;
     }
 
-    $data = $this->fetch($key);
+    $data = $this->get($key);
     return !empty($data);
   }
 
-  public function delete($key)
+  public function delete(string $key): bool
   {
     if (!$this->ready) {
       return false;
@@ -81,7 +71,7 @@ class Memcached implements \CacheExchange\Interfaces\Datastore
     return $this->cache->delete($key);
   }
 
-  public function clear()
+  public function clear(): bool
   {
     if (!$this->ready) {
       return false;
@@ -90,7 +80,7 @@ class Memcached implements \CacheExchange\Interfaces\Datastore
     return $this->cache->flush();
   }
 
-  public function getKeys()
+  public function getKeys(): array|false
   {
     if (!$this->ready) {
       return false;
