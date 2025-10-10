@@ -9,22 +9,38 @@ class Redis implements \CacheExchange\Interfaces\DatastoreInterface
    */
   protected $cache;
 
-  // /**
-  //  * Can memcached connect to the servers?
-  //  * @var bool
-  //  */
-  // public $ready = false;
+  /**
+   * Is Redis available?
+   * @var bool
+   */
+  public $ready = false;
 
   /**
-   * @param $servers
+   * @var string|null
    */
-  public function __construct($servers = [])
+  public $connectionError = null;
+
+  /**
+   * @param $connection
+   */
+  public function __construct($parameters = null, $options = null)
   {
-    $this->cache = new \Predis\Client();
+    $this->cache = new \Predis\Client($parameters, $options);
+
+    try {
+      $this->cache->ping();
+      $this->ready = true;
+    } catch (\Throwable $e) {
+      $this->connectionError = $e->getMessage();
+    }
   }
 
   public function set(string $key, mixed $value, int $ttl = 0): bool
   {
+    if (!$this->ready) {
+      return false;
+    }
+
     if ($ttl > 0) {
       $status = $this->cache->setex($key, $ttl, $value);
     } else {
@@ -36,27 +52,47 @@ class Redis implements \CacheExchange\Interfaces\DatastoreInterface
 
   public function get(string $key): mixed
   {
+    if (!$this->ready) {
+      return false;
+    }
+
     return $this->cache->get($key);
   }
 
   public function exists(string $key): bool
   {
+    if (!$this->ready) {
+      return false;
+    }
+
     return $this->cache->exists($key);
   }
 
   public function delete(string $key): bool
   {
+    if (!$this->ready) {
+      return false;
+    }
+
     return $this->cache->del($key) === 1;
   }
 
   public function clear(): bool
   {
+    if (!$this->ready) {
+      return false;
+    }
+
     $status = $this->cache->flushall();
     return in_array($status->getPayload(), ['OK', 'QUEUED']);
   }
 
   public function getKeys(): array|false
   {
+    if (!$this->ready) {
+      return false;
+    }
+    
     return $this->cache->keys('*');
   }
 }
