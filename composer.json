@@ -16,7 +16,9 @@
     "predis/predis": "^3.2"
   },
   "scripts": {
-    "test": "./vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations --display-errors --display-warnings --display-notices ./tests"
+    "up": "docker compose up -d",
+    "down": "docker compose down --volumes",
+    "test": "docker exec -it cache-exchange-php ./vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations --display-errors --display-warnings --display-notices ./tests"
   },
   "suggest": {
     "ext-memcached": "Required for Memcached adapter usage",
