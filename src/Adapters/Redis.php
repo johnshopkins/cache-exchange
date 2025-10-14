@@ -2,7 +2,7 @@
 
 namespace CacheExchange\Adapters;
 
-class Redis implements \CacheExchange\Interfaces\DatastoreInterface
+class Redis extends BaseAdapter implements \CacheExchange\Interfaces\DatastoreInterface
 {
   /**
    * @var \Predis\Client $redis
@@ -41,6 +41,8 @@ class Redis implements \CacheExchange\Interfaces\DatastoreInterface
       return false;
     }
 
+    $value = $this->maybeSerialize($value);
+
     if ($ttl > 0) {
       $status = $this->cache->setex($key, $ttl, $value);
     } else {
@@ -56,7 +58,9 @@ class Redis implements \CacheExchange\Interfaces\DatastoreInterface
       return false;
     }
 
-    return $this->cache->get($key);
+    $value = $this->cache->get($key);
+
+    return $this->maybeUnserialize($value);
   }
 
   public function exists(string $key): bool
