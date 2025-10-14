@@ -152,7 +152,7 @@ class CacheTest extends TestCase
 
     // null
     $this->assertTrue($cache->set('cache-exchange-test-key', null));
-    $this->assertEquals(null, $cache->get('cache-exchange-test-key'));
+    $this->assertNull($cache->get('cache-exchange-test-key'));
 
     // numerical array
     $array = ['one', 'two'];
@@ -250,7 +250,7 @@ class CacheTest extends TestCase
 
     // null
     $this->assertTrue($cache->set('cache-exchange-test-key', null));
-    $this->assertEquals(null, $cache->get('cache-exchange-test-key'));
+    $this->assertNull($cache->get('cache-exchange-test-key'));
 
     // numerical array
     $array = ['one', 'two'];
