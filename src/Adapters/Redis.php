@@ -41,6 +41,10 @@ class Redis extends BaseAdapter implements \CacheExchange\Interfaces\DatastoreIn
       return false;
     }
 
+    if ($value === null) {
+      $value = '__NULL__';
+    }
+
     $value = $this->maybeSerialize($value);
 
     if ($ttl > 0) {
@@ -59,6 +63,10 @@ class Redis extends BaseAdapter implements \CacheExchange\Interfaces\DatastoreIn
     }
 
     $value = $this->cache->get($key);
+
+    if ($value === '__NULL__') {
+      return null;
+    }
 
     return $this->maybeUnserialize($value);
   }
