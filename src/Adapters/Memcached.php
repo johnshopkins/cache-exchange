@@ -6,7 +6,7 @@ namespace CacheExchange\Adapters;
  * Uses PHP Memcached extension
  * http://www.php.net/manual/en/class.memcached.php
  */
-class Memcached implements \CacheExchange\Interfaces\DatastoreInterface
+class Memcached extends BaseAdapter implements \CacheExchange\Interfaces\DatastoreInterface
 {
   /**
    * Memcached object
@@ -40,6 +40,8 @@ class Memcached implements \CacheExchange\Interfaces\DatastoreInterface
       return false;
     }
 
+    $value = $this->maybeSerialize($value);
+
     return $this->cache->set($key, $value, $ttl);
   }
 
@@ -49,7 +51,9 @@ class Memcached implements \CacheExchange\Interfaces\DatastoreInterface
       return false;
     }
 
-    return $this->cache->get($key);
+    $value = $this->cache->get($key);
+
+    return $this->maybeUnserialize($value);
   }
 
   public function exists(string $key): bool

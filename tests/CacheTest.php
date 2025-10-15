@@ -2,6 +2,8 @@
 
 namespace CacheExchange;
 
+use CacheExchange\Adapters\Memcached;
+use CacheExchange\Adapters\Redis;
 use CacheExchange\Cache;
 use PHPUnit\Framework\TestCase;
 use CacheExchange\mocks\AdapterMock;
@@ -91,5 +93,181 @@ class CacheTest extends TestCase
 
     $this->assertTrue($cache->clear());
     $this->assertEquals($cache->getKeys(), []);
+  }
+
+  public function testMemcachedAdapter()
+  {
+    $memcached = new Memcached([
+      ['cache-exchange-memcached', 11211]
+    ]);
+
+    $cache = new Cache($memcached);
+
+    $cache->clear();
+    // $this->assertEmpty($cache->getKeys()); // unreliable
+
+    $this->assertTrue($cache->set('cache-exchange-test-key', 'test-data'));
+    $this->assertEquals('test-data', $cache->get('cache-exchange-test-key'));
+    // $this->assertContains('cache-exchange-test-key', $cache->getKeys()); // unreliable
+    $this->assertTrue($cache->exists('cache-exchange-test-key'));
+    $this->assertTrue($cache->delete('cache-exchange-test-key'));
+    $this->assertFalse($cache->exists('cache-exchange-test-key'));
+
+    $this->assertTrue($cache->set('cache-exchange-test-key-2', 'test-data-2', 500));
+    $this->assertEquals('test-data-2', $cache->get('cache-exchange-test-key-2'));
+    // $this->assertContains('cache-exchange-test-key-2', $cache->getKeys()); // unreliable
+    $this->assertTrue($cache->exists('cache-exchange-test-key-2'));
+    $this->assertTrue($cache->delete('cache-exchange-test-key-2'));
+    $this->assertFalse($cache->exists('cache-exchange-test-key-2'));
+
+    // $this->assertEmpty($cache->getKeys()); // unreliable
+
+    // non-existant key
+    $this->assertFalse($cache->get('cache-exchange-test-key'));
+    $this->assertFalse($cache->delete('cache-exchange-test-key'));
+  }
+
+  public function testMemcachedAdapter_datatypes()
+  {
+    $memcached = new Memcached([
+      ['cache-exchange-memcached', 11211]
+    ]);
+
+    $cache = new Cache($memcached);
+
+    // booleans
+    $this->assertTrue($cache->set('cache-exchange-test-key', true));
+    $this->assertEquals(true, $cache->get('cache-exchange-test-key'));
+
+    $this->assertTrue($cache->set('cache-exchange-test-key', false));
+    $this->assertEquals(false, $cache->get('cache-exchange-test-key'));
+
+    // integer
+    $this->assertTrue($cache->set('cache-exchange-test-key', 1234));
+    $this->assertEquals(1234, $cache->get('cache-exchange-test-key'));
+
+    // double
+    $this->assertTrue($cache->set('cache-exchange-test-key', 1234.5678));
+    $this->assertEquals(1234.5678, $cache->get('cache-exchange-test-key'));
+
+    // null
+    $this->assertTrue($cache->set('cache-exchange-test-key', null));
+    $this->assertNull($cache->get('cache-exchange-test-key'));
+
+    // numerical array
+    $array = ['one', 'two'];
+    $this->assertTrue($cache->set('cache-exchange-test-key', $array));
+    $this->assertEquals($array, $cache->get('cache-exchange-test-key'));
+
+    // assoaciative array
+    $array = ['one' => 'one', 'two' => 'two'];
+    $this->assertTrue($cache->set('cache-exchange-test-key', $array));
+    $this->assertEquals($array, $cache->get('cache-exchange-test-key'));
+
+    // object
+    $object = (object) ['one' => 'one', 'two' => 'two'];
+    $this->assertTrue($cache->set('cache-exchange-test-key', $object));
+    $this->assertEquals($object, $cache->get('cache-exchange-test-key'));
+
+    // delete key
+    $this->assertTrue($cache->delete('cache-exchange-test-key'));
+  }
+
+  public function testRedisAdapter()
+  {
+    $redis = new Redis([
+      'host' => 'cache-exchange-redis',
+    ]);
+
+    $cache = new Cache($redis);
+
+    $cache->clear();
+    $this->assertEmpty($cache->getKeys());
+
+    $this->assertTrue($cache->set('cache-exchange-test-key', 'test-data'));
+    $this->assertEquals('test-data', $cache->get('cache-exchange-test-key'));
+    $this->assertContains('cache-exchange-test-key', $cache->getKeys());
+    $this->assertTrue($cache->exists('cache-exchange-test-key'));
+    $this->assertTrue($cache->delete('cache-exchange-test-key'));
+    $this->assertFalse($cache->exists('cache-exchange-test-key'));
+
+    $this->assertTrue($cache->set('cache-exchange-test-key-2', 'test-data-2', 500));
+    $this->assertEquals('test-data-2', $cache->get('cache-exchange-test-key-2'));
+    $this->assertContains('cache-exchange-test-key-2', $cache->getKeys());
+    $this->assertTrue($cache->exists('cache-exchange-test-key-2'));
+    $this->assertTrue($cache->delete('cache-exchange-test-key-2'));
+    $this->assertFalse($cache->exists('cache-exchange-test-key-2'));
+
+    $this->assertEmpty($cache->getKeys());
+
+    // non-existant key
+    $this->assertNull($cache->get('cache-exchange-test-key'));
+    $this->assertFalse($cache->delete('cache-exchange-test-key'));
+
+    // test array
+    $array = [
+      'one' => 'one',
+      'two' => 'two',
+    ];
+
+    $this->assertTrue($cache->set('cache-exchange-test-array', $array));
+    $this->assertEquals($array, $cache->get('cache-exchange-test-array'));
+    $this->assertTrue($cache->delete('cache-exchange-test-array'));
+
+    // test object
+    $object = (object) [
+      'one' => 'one',
+      'two' => 'two',
+    ];
+
+    $this->assertTrue($cache->set('cache-exchange-test-object', $object));
+    $this->assertEquals($object, $cache->get('cache-exchange-test-object'));
+    $this->assertTrue($cache->delete('cache-exchange-test-object'));
+  }
+
+  public function testRedisAdapter_datatypes()
+  {
+    $redis = new Redis([
+      'host' => 'cache-exchange-redis',
+    ]);
+
+    $cache = new Cache($redis);
+
+    // booleans
+    $this->assertTrue($cache->set('cache-exchange-test-key', true));
+    $this->assertEquals(true, $cache->get('cache-exchange-test-key'));
+
+    $this->assertTrue($cache->set('cache-exchange-test-key', false));
+    $this->assertEquals(false, $cache->get('cache-exchange-test-key'));
+
+    // integer
+    $this->assertTrue($cache->set('cache-exchange-test-key', 1234));
+    $this->assertEquals(1234, $cache->get('cache-exchange-test-key'));
+
+    // double
+    $this->assertTrue($cache->set('cache-exchange-test-key', 1234.5678));
+    $this->assertEquals(1234.5678, $cache->get('cache-exchange-test-key'));
+
+    // null
+    $this->assertTrue($cache->set('cache-exchange-test-key', null));
+    $this->assertNull($cache->get('cache-exchange-test-key'));
+
+    // numerical array
+    $array = ['one', 'two'];
+    $this->assertTrue($cache->set('cache-exchange-test-key', $array));
+    $this->assertEquals($array, $cache->get('cache-exchange-test-key'));
+
+    // assoaciative array
+    $array = ['one' => 'one', 'two' => 'two'];
+    $this->assertTrue($cache->set('cache-exchange-test-key', $array));
+    $this->assertEquals($array, $cache->get('cache-exchange-test-key'));
+
+    // object
+    $object = (object) ['one' => 'one', 'two' => 'two'];
+    $this->assertTrue($cache->set('cache-exchange-test-key', $object));
+    $this->assertEquals($object, $cache->get('cache-exchange-test-key'));
+
+    // delete key
+    $this->assertTrue($cache->delete('cache-exchange-test-key'));
   }
 }

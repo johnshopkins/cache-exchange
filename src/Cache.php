@@ -30,8 +30,6 @@ class Cache
 		} else {
       $this->keymaker = [$this, 'keymaker__string'];
     }
-
-    // print_r($this->keymaker); die();
 	}
 
   protected function keymaker__array(array|string $array): string

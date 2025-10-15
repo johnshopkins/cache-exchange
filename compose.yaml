@@ -1,0 +1,31 @@
+services:
+
+  php:
+    build: .
+    container_name: cache-exchange-php
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    networks:
+      - cache-exchange-network
+
+  memcached:
+    image: memcached:1.6.39-alpine
+    container_name: cache-exchange-memcached
+    restart: always
+    ports:
+      - 11211:11211
+    networks:
+      - cache-exchange-network
+
+  redis:
+    image: redis:8.2.2-alpine
+    container_name: cache-exchange-redis
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - cache-exchange-network
+
+networks:
+  cache-exchange-network:
