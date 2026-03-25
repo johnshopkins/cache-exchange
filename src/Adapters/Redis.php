@@ -68,6 +68,10 @@ class Redis extends BaseAdapter implements \CacheExchange\Interfaces\DatastoreIn
       return null;
     }
 
+    if ($value === null) {
+      return false;
+    }
+
     return $this->maybeUnserialize($value);
   }
 

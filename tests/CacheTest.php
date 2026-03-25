@@ -201,7 +201,7 @@ class CacheTest extends TestCase
     $this->assertEmpty($cache->getKeys());
 
     // non-existant key
-    $this->assertNull($cache->get('cache-exchange-test-key'));
+    $this->assertFalse($cache->get('cache-exchange-test-key'));
     $this->assertFalse($cache->delete('cache-exchange-test-key'));
 
     // test array
