@@ -56,6 +56,19 @@ class Memcached extends BaseAdapter implements \CacheExchange\Interfaces\Datasto
     return $this->maybeUnserialize($value);
   }
 
+  public function getMany(array $keys): array
+  {
+    if (!$this->ready) {
+      return false;
+    }
+
+    $values = $this->cache->getMulti($keys);
+
+    return array_map(function ($key) use ($values) {
+      return isset($values[$key]) ? $this->maybeUnserialize($values[$key]) : false;
+    }, $keys);
+  }
+
   public function exists(string $key): bool
   {
     if (!$this->ready) {
