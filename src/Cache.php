@@ -84,6 +84,20 @@ class Cache
 	}
 
   /**
+   * Get many values from the cache.
+   * @param array $keys   Array of keys (string) or key data (array)
+   * @param bool $makeKey Convert params into a key. Pass false if you already have the raw key.
+   * @return array
+   */
+  public function getMany(array $keys, bool $makeKey = true): array
+  {
+    if ($makeKey) {
+      $keys = array_map(fn ($key) => $this->makeKey($key), $keys);
+    }
+    return $this->datastore->getMany($keys);
+  }
+
+  /**
    * Checks to see if the cache key exists in the cache.
    * @param array|string $keyData Data to base the cache key on
    * @param bool $makeKey         Convert params into a key. Pass false if you already have the raw key.

@@ -63,7 +63,11 @@ class Redis extends BaseAdapter implements \CacheExchange\Interfaces\DatastoreIn
     }
 
     $value = $this->cache->get($key);
+    return $this->cleanReturnValue($value);
+  }
 
+  protected function cleanReturnValue($value)
+  {
     if ($value === '__NULL__') {
       return null;
     }
@@ -73,6 +77,17 @@ class Redis extends BaseAdapter implements \CacheExchange\Interfaces\DatastoreIn
     }
 
     return $this->maybeUnserialize($value);
+  }
+
+  public function getMany(array $keys): array
+  {
+    if (!$this->ready) {
+      return false;
+    }
+
+    $values = $this->cache->mget($keys);
+
+    return array_map([$this, 'cleanReturnValue'], $values);
   }
 
   public function exists(string $key): bool

@@ -149,6 +149,23 @@ class CacheTest extends TestCase
     // non-existant key
     $this->assertFalse($cache->get('cache-exchange-test-key'));
     $this->assertFalse($cache->delete('cache-exchange-test-key'));
+
+    $this->assertTrue($cache->set('cache-exchange-test-key-3', 'test-data-3'));
+    $this->assertTrue($cache->set('cache-exchange-test-key-4', 'test-data-4'));
+    $this->assertTrue($cache->set('cache-exchange-test-key-5', 'test-data-5'));
+
+    $this->assertEquals([
+      'test-data-3',
+      'test-data-4',
+      'test-data-5',
+      false
+    ], $cache->getMany([
+      'cache-exchange-test-key-3',
+      'cache-exchange-test-key-4',
+      'cache-exchange-test-key-5',
+      'cache-exchange-test-key-6',
+    ]));
+
   }
 
   protected function datatypesTest($adapter)
